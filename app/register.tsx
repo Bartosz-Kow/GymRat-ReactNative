@@ -1,4 +1,4 @@
-import RegisterTemplate from "@/components/templates/registerTemplate";
+import RegisterTemplate from "@/components/templates/registerTemp";
 const Register = () => {
   return <RegisterTemplate />;
 };

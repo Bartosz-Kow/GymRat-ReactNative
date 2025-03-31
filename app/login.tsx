@@ -1,4 +1,4 @@
-import LoginTemplate from "@/components/templates/LoginTemplate";
+import LoginTemplate from "@/components/templates/loginTemp";
 export default function Index() {
   return <LoginTemplate />;
 }
