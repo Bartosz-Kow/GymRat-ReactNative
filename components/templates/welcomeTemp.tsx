@@ -33,25 +33,28 @@ const styles = StyleSheet.create({
     fontSize: 42,
     fontWeight: "bold",
     color: "#444444", // Złoty kolor
-    marginBottom: 10,
+    marginBottom: 20,
+    marginTop: 280,
   },
   subtitle: {
-    fontSize: 24,
+    fontSize: 23,
     color: "#444444",
-    marginBottom: 5,
+    marginBottom: 10,
+    fontWeight: "700",
   },
   description: {
-    fontSize: 24,
+    fontSize: 23,
     color: "#444444",
     textAlign: "center",
     marginBottom: 30,
+    fontWeight: "700"
     
   },
   button: {
-    backgroundColor: "green",
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
+    backgroundColor: "#77DD77",
+    paddingVertical: 25,
+    paddingHorizontal: 125,
+    borderRadius: 35,
     alignItems: "center",
     position: "absolute",
     bottom: 100,
