@@ -14,9 +14,11 @@ const WelcomeTemplate = () => {
 
   return (
     <View>
-      <Text>Tu Bedzie nasz welcome screen</Text>
+      <Text>GymR🐀T</Text>
+      <Text>Gdziekolwiek Jesteś</Text>
+      <Text>Zdrowie Jest Numerem Jeden</Text>
       <TouchableOpacity onPress={goToRegister}>
-        <Text> IDZ DO REGISTER</Text>
+        <Text> Zaczynajmy</Text>
       </TouchableOpacity>
     </View>
   );
