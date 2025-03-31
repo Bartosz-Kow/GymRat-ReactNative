@@ -1,4 +1,4 @@
-import WelcomeTemplate from "@/components/templates/WelcomeTemplate";
+import WelcomeTemplate from "@/components/templates/welcomeTemp";
 
 export default function Index() {
   return <WelcomeTemplate />;
