@@ -21,7 +21,7 @@ const RegisterTemplate = () => {
   };
 
   return (
-    <LinearGradient colors={["#1e3c72", "#2a5298"]} style={styles.container}>
+    <LinearGradient colors={["#f2f2f2", "#ffffff"]} style={styles.container}>
       <SafeAreaView style={styles.innerContainer}>
         <Text style={styles.logo}>GymR🐀T</Text>
         <Text style={styles.subtitle}>Stwórz swoje konto</Text>
@@ -30,7 +30,7 @@ const RegisterTemplate = () => {
           <TextInput
             style={styles.input}
             placeholder="Email"
-            placeholderTextColor="#ccc"
+            placeholderTextColor="#666"
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
@@ -41,7 +41,7 @@ const RegisterTemplate = () => {
           <TextInput
             style={styles.input}
             placeholder="Hasło"
-            placeholderTextColor="#ccc"
+            placeholderTextColor="#666"
             value={password}
             onChangeText={setPassword}
             secureTextEntry
@@ -78,45 +78,46 @@ const styles = StyleSheet.create({
   logo: {
     fontSize: 42,
     fontWeight: "bold",
-    color: "white",
+    color: "#444444",
     marginBottom: 10,
-    textTransform: "uppercase",
-    letterSpacing: 2,
   },
   subtitle: {
-    fontSize: 20,
-    color: "white",
+    fontSize: 24,
+    color: "#444444",
     marginBottom: 20,
   },
   inputContainer: {
     width: "100%",
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    backgroundColor: "white",
     borderRadius: 10,
     marginBottom: 15,
-    padding: 2,
+    paddingVertical: 2,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: "#ddd",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
   },
   input: {
     width: "100%",
     padding: 12,
     fontSize: 16,
-    color: "white",
+    color: "#444444",
   },
   button: {
-    backgroundColor: "#ff9800",
-    paddingVertical: 12,
+    backgroundColor: "green",
+    paddingVertical: 14,
     paddingHorizontal: 24,
     borderRadius: 8,
     alignItems: "center",
     width: "100%",
-    marginTop: 10,
-    shadowColor: "#000",
+    marginTop: 15,
+    shadowColor: "green",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
-    shadowRadius: 5,
+    shadowRadius: 4,
   },
   buttonPressed: {
     opacity: 0.7,
@@ -127,7 +128,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   link: {
-    color: "#fff",
+    color: "#444444",
     fontSize: 16,
     marginTop: 20,
     textDecorationLine: "underline",
