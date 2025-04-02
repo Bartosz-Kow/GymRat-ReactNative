@@ -1,24 +1,104 @@
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
-  StyleSheet,
   View,
   Text,
   TextInput,
   TouchableOpacity,
   SafeAreaView,
-  Pressable,
+  StyleSheet,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import PagerView from "react-native-pager-view";
 
 const RegisterTemplate = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [onboarding, setOnboarding] = useState(false);
+  const [name, setName] = useState("");
+  const [gender, setGender] = useState<"male" | "female" | null>(null);
+  const [birthDate, setBirthDate] = useState("");
+  const pagerRef = useRef<PagerView>(null);
 
-  const goToLogin = () => {
-    router.push("/login");
+  const handleRegister = () => {
+    setOnboarding(true);
   };
+
+  const goToNextPage = (page: number) => {
+    if (pagerRef.current) {
+      pagerRef.current.setPage(page);
+    }
+  };
+
+  if (onboarding) {
+    return (
+      <PagerView ref={pagerRef} style={{ flex: 1 }} initialPage={0}>
+        {/* Imię */}
+        <View key="1" style={styles.page}>
+          <Text style={styles.title}>Wprowadź swoje imię</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Imię"
+            value={name}
+            onChangeText={setName}
+          />
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => goToNextPage(1)}
+          >
+            <Text style={styles.buttonText}>Dalej</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Płeć */}
+        <View key="2" style={styles.page}>
+          <Text style={styles.title}>Wybierz płeć</Text>
+          <TouchableOpacity
+            style={[
+              styles.genderButton,
+              gender === "male" && styles.selectedGender,
+            ]}
+            onPress={() => setGender("male")}
+          >
+            <Text>👨 Mężczyzna</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.genderButton,
+              gender === "female" && styles.selectedGender,
+            ]}
+            onPress={() => setGender("female")}
+          >
+            <Text>👩 Kobieta</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => goToNextPage(2)}
+          >
+            <Text style={styles.buttonText}>Dalej</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Data urodzenia */}
+        <View key="3" style={styles.page}>
+          <Text style={styles.title}>Podaj datę urodzenia</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="YYYY-MM-DD"
+            value={birthDate}
+            onChangeText={setBirthDate}
+          />
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => console.log("yes")}
+          >
+            <Text style={styles.buttonText}>Zakończ</Text>
+          </TouchableOpacity>
+        </View>
+      </PagerView>
+    );
+  }
 
   return (
     <LinearGradient colors={["#f2f2f2", "#ffffff"]} style={styles.container}>
@@ -26,39 +106,22 @@ const RegisterTemplate = () => {
         <Text style={styles.logo}>GymR🐀T</Text>
         <Text style={styles.subtitle}>Stwórz swoje konto</Text>
 
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="#666"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-          />
-        </View>
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Hasło"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
 
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Hasło"
-            placeholderTextColor="#666"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
-        </View>
-
-        <Pressable
-          style={({ pressed }) => [
-            styles.button,
-            pressed && styles.buttonPressed,
-          ]}
-        >
+        <TouchableOpacity style={styles.button} onPress={handleRegister}>
           <Text style={styles.buttonText}>Zarejestruj się</Text>
-        </Pressable>
-
-        <TouchableOpacity onPress={goToLogin}>
-          <Text style={styles.link}>Masz już konto? Zaloguj się</Text>
         </TouchableOpacity>
       </SafeAreaView>
     </LinearGradient>
@@ -66,72 +129,43 @@ const RegisterTemplate = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
   innerContainer: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 20,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
   },
-  logo: {
-    fontSize: 42,
-    fontWeight: "bold",
-    color: "#444444",
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontSize: 24,
-    color: "#444444",
-    marginBottom: 20,
-  },
-  inputContainer: {
-    width: "100%",
-    backgroundColor: "white",
-    borderRadius: 10,
-    marginBottom: 15,
-    paddingVertical: 2,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-  },
+  logo: { fontSize: 42, fontWeight: "bold" },
+  subtitle: { fontSize: 24, marginBottom: 20 },
   input: {
-    width: "100%",
-    padding: 12,
-    fontSize: 16,
-    color: "#444444",
+    width: "80%",
+    padding: 10,
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 15,
   },
   button: {
     backgroundColor: "green",
-    paddingVertical: 14,
-    paddingHorizontal: 24,
+    padding: 14,
     borderRadius: 8,
-    alignItems: "center",
-    width: "100%",
+    alignItems: "center" as const,
     marginTop: 15,
-    shadowColor: "green",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
   },
-  buttonPressed: {
-    opacity: 0.7,
+  buttonText: { color: "white", fontSize: 18 },
+  page: {
+    flex: 1,
+    justifyContent: "center" as const,
+    alignItems: "center" as const,
   },
-  buttonText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
+  title: { fontSize: 24, marginBottom: 20 },
+  genderButton: {
+    padding: 20,
+    margin: 10,
+    borderWidth: 1,
+    borderRadius: 10,
   },
-  link: {
-    color: "#444444",
-    fontSize: 16,
-    marginTop: 20,
-    textDecorationLine: "underline",
+  selectedGender: {
+    backgroundColor: "#D3D3D3",
   },
 });
 
