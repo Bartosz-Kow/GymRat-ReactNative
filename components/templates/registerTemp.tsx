@@ -61,7 +61,8 @@ const RegisterTemplate = () => {
             ]}
             onPress={() => setGender("male")}
           >
-            <Text>👨 Mężczyzna</Text>
+            <Text style={styles.genderText}>👨</Text>
+            {/* Piktogram mężczyzny */}
           </TouchableOpacity>
           <TouchableOpacity
             style={[
@@ -70,7 +71,7 @@ const RegisterTemplate = () => {
             ]}
             onPress={() => setGender("female")}
           >
-            <Text>👩 Kobieta</Text>
+            <Text style={styles.genderText}>👩</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
@@ -159,13 +160,18 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 24, marginBottom: 20 },
   genderButton: {
-    padding: 20,
+    padding: 40,
     margin: 10,
-    borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 70,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#00f480",
   },
   selectedGender: {
     backgroundColor: "#D3D3D3",
+  },
+  genderText: {
+    fontSize: 50,
   },
 });
 
