@@ -6,8 +6,8 @@ import {
   Text,
   TouchableOpacity,
   SafeAreaView,
+  ImageBackground,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 
 const WelcomeTemplate = () => {
   const router = useRouter();
@@ -17,54 +17,65 @@ const WelcomeTemplate = () => {
   };
 
   return (
-    <LinearGradient colors={["#d1f4f9", "#fef6e4"]} style={styles.container}>
+    <ImageBackground
+      source={require("../../assets/images/POCZATKOWY.png")}
+      style={styles.container}
+      resizeMode="cover"
+    >
       <SafeAreaView style={styles.safeArea}>
-        <Text style={styles.logo}>GymR🐀T</Text>
-        <Text style={styles.subtitle}>Gdziekolwiek Jesteś</Text>
-        <Text style={styles.description}>Zdrowie Jest Numerem Jeden</Text>
+        <View style={styles.bottomContent}>
+          <Text style={styles.logo}>GymR🐀T</Text>
+          <Text style={styles.subtitle}>Gdziekolwiek Jesteś</Text>
+          <Text style={styles.description}>Zdrowie Jest Numerem Jeden</Text>
 
-        <TouchableOpacity
-          onPress={goToRegister}
-          style={styles.button}
-          activeOpacity={0.85}
-        >
-          <Text style={styles.buttonText}>Zaczynajmy</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={goToRegister}
+            style={styles.button}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.buttonText}>Zaczynajmy</Text>
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
-    </LinearGradient>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "black",
   },
   safeArea: {
     flex: 1,
-    justifyContent: "center",
+  },
+  bottomContent: {
+    flex: 1,
+    justifyContent: "flex-end",
     alignItems: "center",
     paddingHorizontal: 24,
+    paddingBottom: 60,
   },
   logo: {
     fontSize: 48,
     fontWeight: "800",
-    color: "#222",
+    color: "#fff",
     marginBottom: 10,
     letterSpacing: 1,
   },
   subtitle: {
     fontSize: 22,
-    color: "#333",
+    color: "#fff",
     marginBottom: 6,
   },
   description: {
     fontSize: 18,
-    color: "#444",
+    color: "#fff",
     textAlign: "center",
     marginBottom: 40,
   },
   button: {
-    backgroundColor: "#10b981",
+    backgroundColor: "#00F480",
     paddingVertical: 14,
     paddingHorizontal: 36,
     borderRadius: 16,
@@ -73,8 +84,6 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 3 },
     elevation: 4,
-    position: "absolute",
-    bottom: 80,
   },
   buttonText: {
     color: "#fff",

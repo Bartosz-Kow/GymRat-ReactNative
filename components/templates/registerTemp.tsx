@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { SafeAreaView, StyleSheet, View, Platform } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import RegisterForm from "../organism/RegisterForm";
+import { SafeAreaView, StyleSheet, View, Platform, Image } from "react-native";
+import LoginForm from "../organism/LoginForm";
 import OnboardingPager from "../organism/OnboardingPager";
 
 const RegisterTemplate = () => {
@@ -22,42 +21,44 @@ const RegisterTemplate = () => {
       setBirthDate={setBirthDate}
     />
   ) : (
-    <LinearGradient
-      colors={["#FAF3E0", "#E0F7FA"]}
-      style={styles.container}
-      start={{ x: 0.1, y: 0 }}
-      end={{ x: 0.9, y: 1 }}
-    >
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.formWrapper}>
-          <RegisterForm
-            email={email}
-            password={password}
-            onEmailChange={setEmail}
-            onPasswordChange={setPassword}
-            onRegister={() => setOnboarding(true)}
-          />
-        </View>
-      </SafeAreaView>
-    </LinearGradient>
+    <SafeAreaView style={styles.container}>
+      <Image
+        source={require("../../assets/images/welcome.png")}
+        style={styles.image}
+        resizeMode="cover"
+      />
+      <View style={styles.formWrapper}>
+        <LoginForm
+          email={email}
+          password={password}
+          onEmailChange={setEmail}
+          onPasswordChange={setPassword}
+          onSignIn={() => setOnboarding(true)}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  safeArea: {
-    flex: 1,
-    justifyContent: "center",
     alignItems: "center",
-    padding: 24,
+    justifyContent: "flex-end",
+    backgroundColor: "#00F480",
+  },
+  image: {
+    position: "absolute",
+    top: 0,
+    width: "100%",
+    height: "50%", // lub np. 300 jeśli chcesz sztywną wysokość
   },
   formWrapper: {
     width: "100%",
     maxWidth: 420,
     backgroundColor: "#fff",
-    borderRadius: 24,
+    borderTopRightRadius: 35,
+    borderTopLeftRadius: 35,
     padding: 28,
     shadowColor: "#000",
     shadowOpacity: 0.08,
