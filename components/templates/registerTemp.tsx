@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { SafeAreaView, StyleSheet, View, Platform, Image } from "react-native";
-import LoginForm from "../organism/LoginForm";
+import RegisterForm from "../organism/RegisterForm";
 import OnboardingPager from "../organism/OnboardingPager";
 
 const RegisterTemplate = () => {
@@ -28,7 +28,7 @@ const RegisterTemplate = () => {
         resizeMode="cover"
       />
       <View style={styles.formWrapper}>
-        <LoginForm
+        <RegisterForm
           email={email}
           password={password}
           onEmailChange={setEmail}
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0,
     width: "100%",
-    height: "50%", // lub np. 300 jeśli chcesz sztywną wysokość
+    height: "50%",
   },
   formWrapper: {
     width: "100%",

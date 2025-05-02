@@ -12,7 +12,8 @@ type Props = {
   password: string;
   onEmailChange: (text: string) => void;
   onPasswordChange: (text: string) => void;
-  onSignIn: () => void;
+  onLogin: () => void;
+  onNavigateToRegister?: () => void;
 };
 
 const LoginForm = ({
@@ -20,12 +21,14 @@ const LoginForm = ({
   password,
   onEmailChange,
   onPasswordChange,
-  onSignIn,
+  onLogin,
+  onNavigateToRegister,
 }: Props) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Hello</Text>
-      <Text style={styles.subHeader}>Sign Up</Text>
+      <Text style={styles.header}>Welcome</Text>
+      <Text style={styles.header}>Back!</Text>
+      <Text style={styles.subHeader}>Sign In</Text>
 
       <TextInput
         placeholder="Email"
@@ -44,23 +47,15 @@ const LoginForm = ({
         placeholderTextColor="#999"
         secureTextEntry
       />
-      <TextInput
-        placeholder="Confirm Password"
-        value={password}
-        onChangeText={onPasswordChange}
-        style={styles.input}
-        placeholderTextColor="#999"
-        secureTextEntry
-      />
 
-      <TouchableOpacity style={styles.button} onPress={onSignIn}>
-        <Text style={styles.buttonText}>SIGN UP</Text>
+      <TouchableOpacity style={styles.button} onPress={onLogin}>
+        <Text style={styles.buttonText}>SIGN IN</Text>
       </TouchableOpacity>
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>You already have an account? </Text>
-        <TouchableOpacity>
-          <Text style={styles.signupText}>Sign In</Text>
+        <Text style={styles.footerText}>Don’t have an account? </Text>
+        <TouchableOpacity onPress={onNavigateToRegister}>
+          <Text style={styles.signupText}>Sign Up</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -83,8 +78,6 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     fontSize: 16,
   },
-  forgotPassword: { alignItems: "flex-end", marginBottom: 24 },
-  forgotText: { color: "#333" },
   button: {
     backgroundColor: "#00F480",
     borderRadius: 24,
