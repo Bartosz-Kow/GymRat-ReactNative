@@ -8,8 +8,8 @@ export const register = async (data: { email: string; password: string }) => {
   });
 
   const json = await res.json();
-  console.log("STATUS:", res.status);
-  console.log("BODY:", json);
+  console.log("REGISTER STATUS:", res.status);
+  console.log("REGISTER BODY:", json);
 
   if (!json.successful) {
     throw new Error(json.message || "Błąd rejestracji");
@@ -25,10 +25,13 @@ export const login = async (data: { email: string; password: string }) => {
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message || "Błąd logowania");
+  const json = await res.json();
+  console.log("LOGIN STATUS:", res.status);
+  console.log("LOGIN BODY:", json);
+
+  if (!json.successful) {
+    throw new Error(json.message || "Błąd logowania");
   }
 
-  return res.json();
+  return json;
 };

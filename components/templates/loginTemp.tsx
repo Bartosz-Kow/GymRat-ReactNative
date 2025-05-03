@@ -1,15 +1,44 @@
 import React, { useState } from "react";
-import { SafeAreaView, StyleSheet, View, Platform, Image } from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  View,
+  Platform,
+  Image,
+  Alert,
+} from "react-native";
 import LoginForm from "../organism/LoginForm";
 import { useRouter } from "expo-router";
+import { useLoginMutation } from "@/hooks/useLoginMutation";
 
 const LoginTemplate = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const { mutate: login, isPending } = useLoginMutation();
+
   const handleLogin = () => {
-    console.log("zalogowano");
+    if (!email || !password) {
+      Alert.alert("Uzupełnij wszystkie pola");
+      return;
+    }
+
+    login(
+      { email, password },
+      {
+        onSuccess: (data) => {
+          console.log("Zalogowano pomyślnie:", data);
+          // Możesz zapisać token / user tutaj
+          // Np. push do /home
+          router.replace("/home");
+        },
+        onError: (error: any) => {
+          console.error("Błąd logowania:", error);
+          Alert.alert("Błąd logowania", error.message || "Coś poszło nie tak");
+        },
+      }
+    );
   };
 
   const goToRegister = () => {
