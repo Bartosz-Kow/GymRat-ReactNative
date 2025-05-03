@@ -5,6 +5,8 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  SafeAreaView,
+  Platform,
 } from "react-native";
 import PagerView from "react-native-pager-view";
 
@@ -32,91 +34,150 @@ const OnboardingPager = ({
   };
 
   return (
-    <PagerView ref={pagerRef} style={{ flex: 1 }} initialPage={0}>
-      <View key="1" style={styles.page}>
-        <Text style={styles.title}>Wprowadź swoje imię</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Imię"
-          value={name}
-          onChangeText={setName}
-        />
-        <TouchableOpacity style={styles.button} onPress={() => goToNextPage(1)}>
-          <Text style={styles.buttonText}>Dalej</Text>
-        </TouchableOpacity>
-      </View>
-
-      <View key="2" style={styles.page}>
-        <Text style={styles.title}>Wybierz płeć</Text>
-        {["male", "female"].map((option) => (
+    <SafeAreaView style={styles.safeArea}>
+      <PagerView ref={pagerRef} style={styles.pager} initialPage={0}>
+        <View key="1" style={styles.page}>
+          <Text style={styles.title}>Jak masz na imię?</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Imię"
+            value={name}
+            onChangeText={setName}
+            placeholderTextColor="#999"
+          />
           <TouchableOpacity
-            key={option}
-            style={[
-              styles.genderButton,
-              gender === option && styles.selectedGender,
-            ]}
-            onPress={() => setGender(option as "male" | "female")}
+            style={styles.button}
+            onPress={() => goToNextPage(1)}
           >
-            <Text style={styles.genderText}>
-              {option === "male" ? "👨" : "👩"}
-            </Text>
+            <Text style={styles.buttonText}>Dalej</Text>
           </TouchableOpacity>
-        ))}
-        <TouchableOpacity style={styles.button} onPress={() => goToNextPage(2)}>
-          <Text style={styles.buttonText}>Dalej</Text>
-        </TouchableOpacity>
-      </View>
+        </View>
 
-      <View key="3" style={styles.page}>
-        <Text style={styles.title}>Podaj datę urodzenia</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="YYYY-MM-DD"
-          value={birthDate}
-          onChangeText={setBirthDate}
-        />
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => console.log("done")}
-        >
-          <Text style={styles.buttonText}>Zakończ</Text>
-        </TouchableOpacity>
-      </View>
-    </PagerView>
+        <View key="2" style={styles.page}>
+          <Text style={styles.title}>Wybierz swoją płeć</Text>
+          <View style={styles.genderContainer}>
+            {["male", "female"].map((option) => (
+              <TouchableOpacity
+                key={option}
+                style={[
+                  styles.genderButton,
+                  gender === option && styles.selectedGender,
+                ]}
+                onPress={() => setGender(option as "male" | "female")}
+              >
+                <Text style={styles.genderEmoji}>
+                  {option === "male" ? "👨" : "👩"}
+                </Text>
+                <Text style={styles.genderLabel}>
+                  {option === "male" ? "Mężczyzna" : "Kobieta"}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => goToNextPage(2)}
+          >
+            <Text style={styles.buttonText}>Dalej</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View key="3" style={styles.page}>
+          <Text style={styles.title}>Podaj swoją datę urodzenia</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="YYYY-MM-DD"
+            value={birthDate}
+            onChangeText={setBirthDate}
+            placeholderTextColor="#999"
+          />
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => console.log("Done")}
+          >
+            <Text style={styles.buttonText}>Zakończ</Text>
+          </TouchableOpacity>
+        </View>
+      </PagerView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  page: { flex: 1, justifyContent: "center", alignItems: "center" },
-  title: { fontSize: 24, marginBottom: 20 },
-  input: {
-    width: "80%",
-    padding: 10,
-    borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 15,
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#fff",
   },
-  button: {
-    backgroundColor: "green",
-    padding: 14,
-    borderRadius: 8,
-    alignItems: "center",
-    marginTop: 15,
+  pager: {
+    flex: 1,
   },
-  buttonText: { color: "white", fontSize: 18 },
-  genderButton: {
-    padding: 40,
-    margin: 10,
-    borderRadius: 70,
+  page: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#00f480",
+    paddingHorizontal: 28,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: "600",
+    color: "#192126BF",
+    marginBottom: 32,
+    textAlign: "center",
+  },
+  input: {
+    width: "100%",
+    maxWidth: 420,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    paddingVertical: 12,
+    fontSize: 16,
+    marginBottom: 32,
+  },
+  button: {
+    backgroundColor: "#00F480",
+    borderRadius: 24,
+    paddingVertical: 14,
+    paddingHorizontal: 40,
+    alignItems: "center",
+    marginTop: 24,
+    elevation: Platform.OS === "android" ? 2 : 0,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 16,
+  },
+  genderContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+    maxWidth: 420,
+    marginBottom: 32,
+  },
+  genderButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#F0F0F0",
+    padding: 20,
+    borderRadius: 20,
+    width: 140,
+    height: 140,
   },
   selectedGender: {
-    backgroundColor: "#D3D3D3",
+    backgroundColor: "#00F480",
   },
-  genderText: {
-    fontSize: 50,
+  genderEmoji: {
+    fontSize: 48,
+    marginBottom: 8,
+  },
+  genderLabel: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#192126BF",
   },
 });
 
