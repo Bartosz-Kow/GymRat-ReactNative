@@ -1,15 +1,56 @@
 import React, { useState } from "react";
-import { SafeAreaView, StyleSheet, View, Platform, Image } from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  View,
+  Platform,
+  Image,
+  Alert,
+} from "react-native";
 import RegisterForm from "../organism/RegisterForm";
 import OnboardingPager from "../organism/OnboardingPager";
+import { useRegisterMutation } from "@/hooks/useRegisterMutation";
 
 const RegisterTemplate = () => {
   const [onboarding, setOnboarding] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState(""); // dodane
   const [name, setName] = useState("");
   const [gender, setGender] = useState<"male" | "female" | null>(null);
   const [birthDate, setBirthDate] = useState("");
+
+  const { mutate: register, isPending } = useRegisterMutation();
+
+  const handleRegister = () => {
+    if (!email || !password || !confirmPassword) {
+      Alert.alert("Uzupełnij wszystkie pola");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert("Hasła nie są takie same");
+      return;
+    }
+
+    console.log("SIGN UP clicked");
+    register(
+      { email, password },
+      {
+        onSuccess: (response) => {
+          console.log("Rejestracja OK – odpowiedź z serwera:", response);
+          setOnboarding(true);
+        },
+        onError: (error: any) => {
+          console.error("Błąd rejestracji:", error);
+          Alert.alert(
+            "Błąd rejestracji",
+            error.message || "Coś poszło nie tak"
+          );
+        },
+      }
+    );
+  };
 
   return onboarding ? (
     <OnboardingPager
@@ -31,9 +72,11 @@ const RegisterTemplate = () => {
         <RegisterForm
           email={email}
           password={password}
+          RepeatedPassword={confirmPassword}
           onEmailChange={setEmail}
           onPasswordChange={setPassword}
-          onSignIn={() => setOnboarding(true)}
+          onRepeatedPasswordChange={setConfirmPassword}
+          onSignIn={handleRegister}
         />
       </View>
     </SafeAreaView>

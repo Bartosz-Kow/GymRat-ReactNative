@@ -11,16 +11,20 @@ import {
 type Props = {
   email: string;
   password: string;
+  RepeatedPassword: string;
   onEmailChange: (text: string) => void;
   onPasswordChange: (text: string) => void;
+  onRepeatedPasswordChange: (text: string) => void;
   onSignIn: () => void;
 };
 
 const RegisterForm = ({
   email,
   password,
+  RepeatedPassword,
   onEmailChange,
   onPasswordChange,
+  onRepeatedPasswordChange,
   onSignIn,
 }: Props) => {
   const router = useRouter();
@@ -51,8 +55,8 @@ const RegisterForm = ({
       />
       <TextInput
         placeholder="Confirm Password"
-        value={password}
-        onChangeText={onPasswordChange}
+        value={RepeatedPassword}
+        onChangeText={onRepeatedPasswordChange}
         style={styles.input}
         placeholderTextColor="#999"
         secureTextEntry
