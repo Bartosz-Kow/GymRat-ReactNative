@@ -1,8 +1,12 @@
 import * as SQLite from "expo-sqlite";
+
 // Typy danych
 export interface User {
   id: string;
   email: string;
+  name?: string;
+  gender?: "male" | "female";
+  birthDate?: string;
 }
 
 export interface Exercise {
@@ -19,7 +23,10 @@ const db = SQLite.openDatabaseSync("app.db");
 export const initDatabase = (): void => {
   db.runSync(`CREATE TABLE IF NOT EXISTS users (
     id TEXT PRIMARY KEY NOT NULL,
-    email TEXT
+    email TEXT,
+    name TEXT,
+    gender TEXT,
+    birthDate TEXT
   );`);
   db.runSync(`CREATE TABLE IF NOT EXISTS exercises (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -29,12 +36,26 @@ export const initDatabase = (): void => {
     FOREIGN KEY (userId) REFERENCES users (id)
   );`);
 };
+
 // Dodaj użytkownika
 export const insertUser = (id: string, email: string): void => {
   db.runSync("INSERT OR REPLACE INTO users (id, email) VALUES (?, ?);", [
     id,
     email,
   ]);
+};
+
+// Zaktualizuj dane użytkownika
+export const updateUserInfo = (
+  id: string,
+  name: string,
+  gender: "male" | "female",
+  birthDate: string
+): void => {
+  db.runSync(
+    "UPDATE users SET name = ?, gender = ?, birthDate = ? WHERE id = ?;",
+    [name, gender, birthDate, id]
+  );
 };
 
 // Pobierz dane użytkownika po ID
@@ -47,6 +68,7 @@ export const getUserById = (
   ]);
   callback(result ?? null);
 };
+
 // Dodaj ćwiczenie
 export const insertExercise = (
   userId: string,
@@ -58,6 +80,7 @@ export const insertExercise = (
     [userId, name, description]
   );
 };
+
 // Pobierz wszystkie ćwiczenia użytkownika
 export const getExercisesByUserId = (
   userId: string,

@@ -7,9 +7,12 @@ import {
   StyleSheet,
   SafeAreaView,
   Platform,
+  Alert,
 } from "react-native";
 import PagerView from "react-native-pager-view";
-
+import { getUserById, updateUserInfo } from "@/database/database";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 type Props = {
   name: string;
   setName: (val: string) => void;
@@ -31,6 +34,46 @@ const OnboardingPager = ({
 
   const goToNextPage = (page: number) => {
     pagerRef.current?.setPage(page);
+  };
+
+  const handleFinish = async () => {
+    console.log("Kliknięto Zakończ");
+
+    if (!gender) {
+      console.log("Brak płci – nie zapisuję");
+      Alert.alert("Uwaga", "Wybierz płeć przed zakończeniem");
+      return;
+    }
+
+    try {
+      const userId = await AsyncStorage.getItem("userId");
+      console.log("Pobrane userId:", userId);
+
+      if (!userId) {
+        Alert.alert("Błąd", "Nie znaleziono userId");
+        return;
+      }
+
+      getUserById(userId, (user) => {
+        if (!user) {
+          console.log("Brak użytkownika w bazie");
+          Alert.alert("Błąd", "Użytkownik nie istnieje lokalnie");
+          return;
+        }
+
+        updateUserInfo(user.id, name, gender, birthDate);
+        console.log("Zaktualizowano dane użytkownika:", {
+          name,
+          gender,
+          birthDate,
+        });
+        Alert.alert("Sukces", "Dane zapisane 🎉");
+        router.replace("/home");
+      });
+    } catch (error) {
+      console.error("Błąd w handleFinish:", error);
+      Alert.alert("Błąd krytyczny", "Coś poszło nie tak");
+    }
   };
 
   return (
@@ -91,10 +134,7 @@ const OnboardingPager = ({
             onChangeText={setBirthDate}
             placeholderTextColor="#999"
           />
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => console.log("Done")}
-          >
+          <TouchableOpacity style={styles.button} onPress={handleFinish}>
             <Text style={styles.buttonText}>Zakończ</Text>
           </TouchableOpacity>
         </View>
