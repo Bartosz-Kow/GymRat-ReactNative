@@ -15,7 +15,7 @@ const RegisterTemplate = () => {
   const [onboarding, setOnboarding] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState(""); // dodane
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
   const [gender, setGender] = useState<"male" | "female" | null>(null);
   const [birthDate, setBirthDate] = useState("");

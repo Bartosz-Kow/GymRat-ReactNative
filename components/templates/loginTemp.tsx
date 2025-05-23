@@ -29,8 +29,6 @@ const LoginTemplate = () => {
       {
         onSuccess: (data) => {
           console.log("Zalogowano pomyślnie:", data);
-          // Możesz zapisać token / user tutaj
-          // Np. push do /home
           router.replace("/home");
         },
         onError: (error: any) => {
