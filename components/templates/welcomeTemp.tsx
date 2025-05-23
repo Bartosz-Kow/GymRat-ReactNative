@@ -8,7 +8,8 @@ import {
   SafeAreaView,
   ImageBackground,
 } from "react-native";
-
+import { useEffect } from "react";
+import { initDatabase } from "@/database/database";
 const WelcomeTemplate = () => {
   const router = useRouter();
 
@@ -16,6 +17,9 @@ const WelcomeTemplate = () => {
     router.push("/register");
   };
 
+  useEffect(() => {
+    initDatabase();
+  }, []);
   return (
     <ImageBackground
       source={require("../../assets/images/POCZATKOWY.png")}

@@ -10,6 +10,7 @@ import {
 import LoginForm from "../organism/LoginForm";
 import { useRouter } from "expo-router";
 import { useLoginMutation } from "@/hooks/useLoginMutation";
+import { getUserById, getExercisesByUserId } from "@/database/database";
 
 const LoginTemplate = () => {
   const router = useRouter();
@@ -29,7 +30,27 @@ const LoginTemplate = () => {
       {
         onSuccess: (data) => {
           console.log("Zalogowano pomyślnie:", data);
-          router.replace("/home");
+
+          const userId = data.userId;
+
+          getUserById(userId, (user) => {
+            if (!user) {
+              Alert.alert("Brak lokalnego użytkownika");
+              router.replace("/home");
+              console.log(`Zapisywanie użytkownika ${userId} do bazy danych`);
+              return;
+            }
+
+            getExercisesByUserId(userId, (exercises) => {
+              if (exercises.length === 0) {
+                Alert.alert("Witaj użytkowniku 👋");
+              } else {
+                console.log("Twoje ćwiczenia:", exercises);
+              }
+
+              router.replace("/home");
+            });
+          });
         },
         onError: (error: any) => {
           console.error("Błąd logowania:", error);

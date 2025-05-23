@@ -10,6 +10,7 @@ import {
 import RegisterForm from "../organism/RegisterForm";
 import OnboardingPager from "../organism/OnboardingPager";
 import { useRegisterMutation } from "@/hooks/useRegisterMutation";
+import { insertUser } from "@/database/database";
 
 const RegisterTemplate = () => {
   const [onboarding, setOnboarding] = useState(false);
@@ -39,7 +40,9 @@ const RegisterTemplate = () => {
       {
         onSuccess: (response) => {
           console.log("Rejestracja OK – odpowiedź z serwera:", response);
+          insertUser(response.userId, email);
           setOnboarding(true);
+          console.log("Zapisano użytkownika do bazy danych:", response.userId);
         },
         onError: (error: any) => {
           console.error("Błąd rejestracji:", error);
