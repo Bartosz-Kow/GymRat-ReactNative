@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { router } from "expo-router";
 
 export default function FormTemp() {
   const [trainingName, setTrainingName] = useState("");
@@ -62,7 +63,10 @@ export default function FormTemp() {
       </View>
 
       <Text style={styles.label}>Ćwiczenia</Text>
-      <TouchableOpacity style={styles.addButton}>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => router.push("/ExercisePickerScreen")}
+      >
         <Text style={styles.addButtonText}>+ Dodaj Ćwiczenie</Text>
       </TouchableOpacity>
 

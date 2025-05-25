@@ -35,3 +35,12 @@ export const login = async (data: { email: string; password: string }) => {
 
   return json;
 };
+export const getExercises = async () => {
+  const res = await fetch(`${BASE_URL}/exercises`);
+  if (!res.ok) {
+    throw new Error("Błąd sieci przy pobieraniu ćwiczeń");
+  }
+
+  const json = await res.json();
+  return json;
+};
