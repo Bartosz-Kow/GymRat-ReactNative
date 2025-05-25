@@ -12,6 +12,8 @@ import OnboardingPager from "../organism/OnboardingPager";
 import { useRegisterMutation } from "@/hooks/useRegisterMutation";
 import { insertUser } from "@/database/database";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAuth } from "@/context/AuthContext";
+const { setUserId } = useAuth();
 
 const RegisterTemplate = () => {
   const [onboarding, setOnboarding] = useState(false);
@@ -43,6 +45,7 @@ const RegisterTemplate = () => {
           console.log("Rejestracja OK – odpowiedź z serwera:", response);
           insertUser(response.userId, email);
           await AsyncStorage.setItem("userId", response.userId);
+          setUserId(response.userId); // <-- dodaj to
           setOnboarding(true);
           console.log("Zapisano użytkownika i userId:", response.userId);
         },

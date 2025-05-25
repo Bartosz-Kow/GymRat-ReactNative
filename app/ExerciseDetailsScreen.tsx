@@ -1,10 +1,16 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
+import { useExerciseStore } from "@/store/useExcersiseStore";
 
 export default function ExerciseDetailsScreen() {
   const router = useRouter();
   const { exercise } = useLocalSearchParams();
+  const addExercise = useExerciseStore((state) => state.addExercise);
+
+  if (typeof exercise !== "string") {
+    throw new Error("Brak danych ćwiczenia lub nieprawidłowy format");
+  }
 
   const parsedExercise = JSON.parse(exercise);
 
@@ -13,13 +19,16 @@ export default function ExerciseDetailsScreen() {
   const [sets, setSets] = useState("");
 
   const handleSave = () => {
-    console.log({
-      exercise: parsedExercise,
+    if (!weight || !reps || !sets) return;
+
+    addExercise({
+      name: parsedExercise.name,
       weight,
       reps,
       sets,
     });
-    router.back();
+
+    router.back(); // wraca do formularza
   };
 
   return (

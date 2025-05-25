@@ -1,17 +1,20 @@
 import React, { useState } from "react";
 import {
-  View,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
-  Switch,
+  View,
   StyleSheet,
-  ScrollView,
+  Switch,
   Platform,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { router } from "expo-router";
+import { insertTrainingWithExercises } from "@/database/database";
+import { useAuth } from "@/context/AuthContext";
+import { useExerciseStore } from "@/store/useExcersiseStore";
 
 export default function FormTemp() {
   const [trainingName, setTrainingName] = useState("");
@@ -21,6 +24,37 @@ export default function FormTemp() {
   const [shared, setShared] = useState(true);
   const [publicTitle, setPublicTitle] = useState("");
   const [level, setLevel] = useState("Średniozaawansowany");
+
+  const { userId } = useAuth();
+  const exercises = useExerciseStore((state) => state.exercises);
+  const clearExercises = useExerciseStore((state) => state.clearExercises);
+
+  const resetForm = () => {
+    setTrainingName("");
+    setDate(new Date());
+    setType("Siłowy");
+    setShared(true);
+    setPublicTitle("");
+    setLevel("Średniozaawansowany");
+  };
+
+  const handleSave = () => {
+    if (!userId) return;
+
+    insertTrainingWithExercises(userId, {
+      name: trainingName,
+      date: date.toISOString(),
+      type,
+      shared,
+      publicTitle,
+      level,
+      exercises,
+    });
+
+    clearExercises();
+    resetForm();
+    router.replace("/home");
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -70,6 +104,14 @@ export default function FormTemp() {
         <Text style={styles.addButtonText}>+ Dodaj Ćwiczenie</Text>
       </TouchableOpacity>
 
+      {exercises.map((ex, index) => (
+        <View key={index} style={styles.exerciseItem}>
+          <Text>
+            {ex.name} – {ex.weight}kg × {ex.reps} powt. × {ex.sets} serii
+          </Text>
+        </View>
+      ))}
+
       <View style={styles.switchRow}>
         <Text style={styles.label}>
           Udostępnić ten trening innym użytkownikom?
@@ -97,7 +139,7 @@ export default function FormTemp() {
         </Picker>
       </View>
 
-      <TouchableOpacity style={styles.saveButton}>
+      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
         <Text style={styles.saveButtonText}>Zapisz Trening</Text>
       </TouchableOpacity>
     </ScrollView>
@@ -143,6 +185,14 @@ const styles = StyleSheet.create({
   addButtonText: {
     color: "#00cc99",
     fontWeight: "bold",
+  },
+  exerciseItem: {
+    marginTop: 10,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#eee",
+    borderRadius: 10,
+    backgroundColor: "#f9f9f9",
   },
   switchRow: {
     flexDirection: "row",
