@@ -48,14 +48,16 @@ export default function TrainingDetailsScreen() {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.editButton}
-          onPress={() => router.push(`/edit/${id}`)}
+          onPress={() =>
+            router.push(`/training-details/EditTrainingScreen?id=${id}`)
+          }
         >
           <Text style={styles.buttonText}>Edytuj trening</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.progressButton}
-          onPress={() => router.push(`/progress/${id}`)}
+          onPress={() => console.log("Progresuj trening")}
         >
           <Text style={styles.buttonText}>Progresuj</Text>
         </TouchableOpacity>
