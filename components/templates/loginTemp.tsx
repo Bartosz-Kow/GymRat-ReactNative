@@ -11,6 +11,8 @@ import LoginForm from "../organism/LoginForm";
 import { useRouter } from "expo-router";
 import { useLoginMutation } from "@/hooks/useLoginMutation";
 import { getUserById, getExercisesByUserId } from "@/database/database";
+import { useAuth } from "@/context/AuthContext";
+const { setUserId } = useAuth();
 
 const LoginTemplate = () => {
   const router = useRouter();
@@ -29,9 +31,8 @@ const LoginTemplate = () => {
       { email, password },
       {
         onSuccess: (data) => {
-          console.log("Zalogowano pomyślnie:", data);
-
           const userId = data.userId;
+          setUserId(userId);
 
           getUserById(userId, (user) => {
             if (!user) {
