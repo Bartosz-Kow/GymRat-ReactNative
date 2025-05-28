@@ -199,3 +199,52 @@ export const getExercisesByTrainingId = (
   );
   callback(results);
 };
+export const updateTrainingWithExercises = (
+  trainingId: number,
+  trainingData: {
+    name: string;
+    date: string;
+    type: string;
+    shared: boolean;
+    publicTitle: string;
+    level: string;
+    exercises: {
+      name: string;
+      weight: string;
+      reps: string;
+      sets: string;
+    }[];
+  }
+): void => {
+  const { name, date, type, shared, publicTitle, level, exercises } =
+    trainingData;
+
+  // Zaktualizuj dane treningu
+  db.runSync(
+    `UPDATE trainings SET name = ?, date = ?, type = ?, shared = ?, publicTitle = ?, level = ? WHERE id = ?`,
+    [name, date, type, shared ? 1 : 0, publicTitle, level, trainingId]
+  );
+
+  // Usuń stare ćwiczenia
+  db.runSync("DELETE FROM training_exercises WHERE trainingId = ?", [
+    trainingId,
+  ]);
+
+  // Dodaj nowe ćwiczenia
+  exercises.forEach((ex) => {
+    db.runSync(
+      `INSERT INTO training_exercises (trainingId, name, weight, reps, sets) VALUES (?, ?, ?, ?, ?)`,
+      [trainingId, ex.name, ex.weight, ex.reps, ex.sets]
+    );
+  });
+};
+export const getTrainingById = (
+  id: number,
+  callback: (training: Training | null) => void
+): void => {
+  const result = db.getFirstSync<Training>(
+    "SELECT * FROM trainings WHERE id = ?;",
+    [id]
+  );
+  callback(result ?? null);
+};

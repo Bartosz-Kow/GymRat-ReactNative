@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ScrollView,
   Text,
@@ -8,67 +8,68 @@ import {
   StyleSheet,
   Switch,
   Platform,
-  Alert,
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { router } from "expo-router";
-import { insertTrainingWithExercises } from "@/database/database";
-import { useAuth } from "@/context/AuthContext";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import {
+  getExercisesByTrainingId,
+  getTrainingById,
+  Training,
+} from "@/database/database";
 import { useExerciseStore } from "@/store/useExcersiseStore";
 import { MaterialIcons } from "@expo/vector-icons";
+import { updateTrainingWithExercises } from "@/database/database";
 
-export default function FormTemp() {
-  const [trainingName, setTrainingName] = useState("");
+export default function EditTrainingScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
+  const [training, setTraining] = useState<Partial<Training>>({});
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [type, setType] = useState("Siłowy");
-  const [shared, setShared] = useState(true);
-  const [publicTitle, setPublicTitle] = useState("");
-  const [level, setLevel] = useState("Średniozaawansowany");
 
-  const { userId } = useAuth();
   const exercises = useExerciseStore((state) => state.exercises);
-  const clearExercises = useExerciseStore((state) => state.clearExercises);
+  const setExercises = useExerciseStore((state) => state.setExercises);
   const removeExercise = useExerciseStore((state) => state.removeExercise);
 
-  const resetForm = () => {
-    setTrainingName("");
-    setDate(new Date());
-    setType("Siłowy");
-    setShared(true);
-    setPublicTitle("");
-    setLevel("Średniozaawansowany");
-  };
+  useEffect(() => {
+    if (!id) return;
+
+    getTrainingById(Number(id), (tr) => {
+      if (tr) {
+        setTraining(tr);
+        setDate(new Date(tr.date));
+      }
+    });
+
+    getExercisesByTrainingId(Number(id), setExercises);
+  }, [id]);
 
   const handleSave = () => {
-    if (!userId) return;
+    if (!id) return;
 
-    insertTrainingWithExercises(userId, {
-      name: trainingName,
+    updateTrainingWithExercises(Number(id), {
+      name: training.name!,
       date: date.toISOString(),
-      type,
-      shared,
-      publicTitle,
-      level,
+      type: training.type!,
+      shared: training.shared ?? false,
+      publicTitle: training.publicTitle || "",
+      level: training.level!,
       exercises,
     });
 
-    clearExercises();
-    resetForm();
     router.replace("/home");
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>Nowy trening</Text>
+      <Text style={styles.header}>Edytuj trening</Text>
 
       <Text style={styles.label}>Nazwa treningu</Text>
       <TextInput
         style={styles.input}
-        placeholder="Nazwa Treningu"
-        value={trainingName}
-        onChangeText={setTrainingName}
+        value={training.name}
+        onChangeText={(text) => setTraining((t) => ({ ...t, name: text }))}
       />
 
       <Text style={styles.label}>Data</Text>
@@ -93,20 +94,16 @@ export default function FormTemp() {
 
       <Text style={styles.label}>Typ</Text>
       <View style={styles.picker}>
-        <Picker selectedValue={type} onValueChange={setType}>
+        <Picker
+          selectedValue={training.type ?? "Siłowy"}
+          onValueChange={(value) => setTraining((t) => ({ ...t, type: value }))}
+        >
           <Picker.Item label="Siłowy" value="Siłowy" />
           <Picker.Item label="Cardio" value="Cardio" />
         </Picker>
       </View>
 
       <Text style={styles.label}>Ćwiczenia</Text>
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => router.push("/ExercisePickerScreen")}
-      >
-        <Text style={styles.addButtonText}>+ Dodaj Ćwiczenie</Text>
-      </TouchableOpacity>
-
       {exercises.map((ex, index) => (
         <View key={index} style={styles.exerciseCard}>
           <View style={styles.exerciseInfo}>
@@ -120,25 +117,38 @@ export default function FormTemp() {
           </TouchableOpacity>
         </View>
       ))}
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => router.push("/ExercisePickerScreen")}
+      >
+        <Text style={styles.addButtonText}>+ Dodaj Ćwiczenie</Text>
+      </TouchableOpacity>
 
       <View style={styles.switchRow}>
-        <Text style={styles.label}>
-          Udostępnić ten trening innym użytkownikom?
-        </Text>
-        <Switch value={shared} onValueChange={setShared} />
+        <Text style={styles.label}>Udostępnić innym?</Text>
+        <Switch
+          value={training.shared}
+          onValueChange={(val) => setTraining((t) => ({ ...t, shared: val }))}
+        />
       </View>
 
-      <Text style={styles.label}>Tytuł treningu dla innych:</Text>
+      <Text style={styles.label}>Publiczny tytuł</Text>
       <TextInput
         style={styles.input}
-        placeholder="Publiczna nazwa treningu"
-        value={publicTitle}
-        onChangeText={setPublicTitle}
+        value={training.publicTitle}
+        onChangeText={(text) =>
+          setTraining((t) => ({ ...t, publicTitle: text }))
+        }
       />
 
       <Text style={styles.label}>Stopień zaawansowania</Text>
       <View style={styles.picker}>
-        <Picker selectedValue={level} onValueChange={setLevel}>
+        <Picker
+          selectedValue={training.level}
+          onValueChange={(value) =>
+            setTraining((t) => ({ ...t, level: value }))
+          }
+        >
           <Picker.Item label="Początkujący" value="Początkujący" />
           <Picker.Item
             label="Średniozaawansowany"
@@ -149,7 +159,7 @@ export default function FormTemp() {
       </View>
 
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveButtonText}>Zapisz Trening</Text>
+        <Text style={styles.saveButtonText}>Zapisz zmiany</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -189,19 +199,6 @@ const styles = StyleSheet.create({
     marginTop: 5,
     overflow: "hidden",
   },
-  addButton: {
-    marginTop: 10,
-    padding: 12,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#00cc99",
-    alignItems: "center",
-  },
-  addButtonText: {
-    color: "#00cc99",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
   exerciseCard: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -212,11 +209,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#d2f4eb",
     marginTop: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 2,
   },
   exerciseInfo: {
     flex: 1,
@@ -253,5 +245,18 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  addButton: {
+    marginTop: 10,
+    padding: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#00cc99",
+    alignItems: "center",
+  },
+  addButtonText: {
+    color: "#00cc99",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });

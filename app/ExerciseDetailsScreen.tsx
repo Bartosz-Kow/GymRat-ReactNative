@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
+} from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useExerciseStore } from "@/store/useExcersiseStore";
 
@@ -19,7 +28,10 @@ export default function ExerciseDetailsScreen() {
   const [sets, setSets] = useState("");
 
   const handleSave = () => {
-    if (!weight || !reps || !sets) return;
+    if (!weight || !reps || !sets) {
+      Alert.alert("Uzupełnij wszystkie pola!");
+      return;
+    }
 
     addExercise({
       name: parsedExercise.name,
@@ -28,56 +40,92 @@ export default function ExerciseDetailsScreen() {
       sets,
     });
 
-    router.back(); // wraca do formularza
+    router.back();
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
       <Text style={styles.title}>{parsedExercise.name}</Text>
 
-      <Text>Ciężar (kg):</Text>
+      <Text style={styles.label}>Ciężar (kg):</Text>
       <TextInput
         style={styles.input}
         keyboardType="numeric"
         value={weight}
         onChangeText={setWeight}
+        placeholder="Np. 40"
       />
 
-      <Text>Liczba powtórzeń:</Text>
+      <Text style={styles.label}>Liczba powtórzeń:</Text>
       <TextInput
         style={styles.input}
         keyboardType="numeric"
         value={reps}
         onChangeText={setReps}
+        placeholder="Np. 10"
       />
 
-      <Text>Liczba serii:</Text>
+      <Text style={styles.label}>Liczba serii:</Text>
       <TextInput
         style={styles.input}
         keyboardType="numeric"
         value={sets}
         onChangeText={setSets}
+        placeholder="Np. 4"
       />
 
-      <Button title="Zapisz ćwiczenie" onPress={handleSave} />
-    </View>
+      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+        <Text style={styles.saveButtonText}>Zapisz ćwiczenie</Text>
+      </TouchableOpacity>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
+    flex: 1,
+    backgroundColor: "#fff",
+    padding: 24,
+    paddingTop: 50,
   },
   title: {
-    fontSize: 20,
+    fontSize: 26,
     fontWeight: "bold",
-    marginBottom: 20,
+    color: "#00cc99",
+    marginBottom: 30,
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 5,
+    color: "#333",
   },
   input: {
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 15,
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 20,
+    fontSize: 16,
+    backgroundColor: "#f9f9f9",
+  },
+  saveButton: {
+    backgroundColor: "#00cc99",
+    paddingVertical: 15,
+    borderRadius: 12,
+    alignItems: "center",
+    marginTop: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  saveButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
