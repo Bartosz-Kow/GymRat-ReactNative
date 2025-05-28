@@ -16,29 +16,32 @@ import {
   getExercisesByTrainingId,
   getTrainingById,
   Training,
-  TrainingExercise,
 } from "@/database/database";
 import { useExerciseStore } from "@/store/useExcersiseStore";
 import { MaterialIcons } from "@expo/vector-icons";
 import { updateTrainingWithExercises } from "@/database/database";
+
 export default function EditTrainingScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const [training, setTraining] = useState<Partial<Training>>({});
-  const [exercises, setExercises] = useState<TrainingExercise[]>([]);
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
+  const exercises = useExerciseStore((state) => state.exercises);
+  const setExercises = useExerciseStore((state) => state.setExercises);
   const removeExercise = useExerciseStore((state) => state.removeExercise);
 
   useEffect(() => {
     if (!id) return;
+
     getTrainingById(Number(id), (tr) => {
       if (tr) {
         setTraining(tr);
         setDate(new Date(tr.date));
       }
     });
+
     getExercisesByTrainingId(Number(id), setExercises);
   }, [id]);
 
@@ -52,12 +55,7 @@ export default function EditTrainingScreen() {
       shared: training.shared ?? false,
       publicTitle: training.publicTitle || "",
       level: training.level!,
-      exercises: exercises.map(({ name, weight, reps, sets }) => ({
-        name,
-        weight,
-        reps,
-        sets,
-      })),
+      exercises,
     });
 
     router.replace("/home");
@@ -119,6 +117,12 @@ export default function EditTrainingScreen() {
           </TouchableOpacity>
         </View>
       ))}
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => router.push("/ExercisePickerScreen")}
+      >
+        <Text style={styles.addButtonText}>+ Dodaj Ćwiczenie</Text>
+      </TouchableOpacity>
 
       <View style={styles.switchRow}>
         <Text style={styles.label}>Udostępnić innym?</Text>
@@ -241,5 +245,18 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  addButton: {
+    marginTop: 10,
+    padding: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#00cc99",
+    alignItems: "center",
+  },
+  addButtonText: {
+    color: "#00cc99",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
