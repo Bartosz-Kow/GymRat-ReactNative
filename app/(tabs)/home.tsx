@@ -20,7 +20,7 @@ import { router } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 
 export default function Home() {
-  const { userId } = useAuth();
+  const { userId, isInitialized } = useAuth();
   const [trainings, setTrainings] = useState<Training[]>([]);
   const [userName, setUserName] = useState<string | null>(null);
 
@@ -51,6 +51,14 @@ export default function Home() {
       },
     ]);
   };
+
+  if (!isInitialized) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text>Wczytywanie...</Text>
+      </SafeAreaView>
+    );
+  }
 
   if (!userId) {
     return (

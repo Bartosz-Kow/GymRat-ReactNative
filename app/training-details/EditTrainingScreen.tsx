@@ -15,11 +15,11 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import {
   getExercisesByTrainingId,
   getTrainingById,
+  updateTrainingWithExercises,
   Training,
 } from "@/database/database";
 import { useExerciseStore } from "@/store/useExcersiseStore";
 import { MaterialIcons } from "@expo/vector-icons";
-import { updateTrainingWithExercises } from "@/database/database";
 
 export default function EditTrainingScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -31,6 +31,7 @@ export default function EditTrainingScreen() {
   const exercises = useExerciseStore((state) => state.exercises);
   const setExercises = useExerciseStore((state) => state.setExercises);
   const removeExercise = useExerciseStore((state) => state.removeExercise);
+  const clearExercises = useExerciseStore((state) => state.clearExercises);
 
   useEffect(() => {
     if (!id) return;
@@ -43,6 +44,11 @@ export default function EditTrainingScreen() {
     });
 
     getExercisesByTrainingId(Number(id), setExercises);
+
+    // ✅ Czyść ćwiczenia przy wychodzeniu z ekranu
+    return () => {
+      clearExercises();
+    };
   }, [id]);
 
   const handleSave = () => {
@@ -58,6 +64,7 @@ export default function EditTrainingScreen() {
       exercises,
     });
 
+    clearExercises(); // ✅ Czyść po zapisaniu
     router.replace("/home");
   };
 
