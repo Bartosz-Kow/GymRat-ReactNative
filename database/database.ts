@@ -130,6 +130,7 @@ export const insertTrainingWithExercises = (
     }[];
   }
 ): void => {
+  console.log("ZAPIS TRENINGU DLA userId:", userId);
   const { name, date, type, shared, publicTitle, level, exercises } =
     trainingData;
 
@@ -163,15 +164,16 @@ export interface Training {
   publicTitle: string;
   level: string;
 }
-
 export const getTrainingsByUserId = (
   userId: string,
   callback: (trainings: Training[]) => void
 ): void => {
+  console.log("Pobieram treningi dla:", userId);
   const results = db.getAllSync<Training>(
     "SELECT * FROM trainings WHERE userId = ?;",
     [userId]
   );
+  console.log("Znaleziono treningów:", results.length);
   callback(results);
 };
 export const deleteTrainingById = (trainingId: number): void => {

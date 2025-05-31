@@ -26,6 +26,7 @@ export default function Home() {
 
   const loadTrainings = () => {
     if (!userId) return;
+    console.log("Ładowanie treningów dla:", userId);
     getTrainingsByUserId(userId, setTrainings);
     getUserById(userId, (user) => {
       setUserName(user?.name ?? "Użytkowniku");

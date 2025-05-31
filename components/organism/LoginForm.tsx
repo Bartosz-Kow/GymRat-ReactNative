@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
 
 type Props = {
@@ -14,6 +15,7 @@ type Props = {
   onPasswordChange: (text: string) => void;
   onLogin: () => void;
   onNavigateToRegister?: () => void;
+  isLoading?: boolean;
 };
 
 const LoginForm = ({
@@ -23,6 +25,7 @@ const LoginForm = ({
   onPasswordChange,
   onLogin,
   onNavigateToRegister,
+  isLoading = false,
 }: Props) => {
   return (
     <View style={styles.container}>
@@ -48,8 +51,16 @@ const LoginForm = ({
         secureTextEntry
       />
 
-      <TouchableOpacity style={styles.button} onPress={onLogin}>
-        <Text style={styles.buttonText}>SIGN IN</Text>
+      <TouchableOpacity
+        style={[styles.button, isLoading && styles.disabledButton]}
+        onPress={onLogin}
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <ActivityIndicator size="small" color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>SIGN IN</Text>
+        )}
       </TouchableOpacity>
 
       <View style={styles.footer}>
@@ -84,6 +95,9 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: "center",
     marginBottom: 32,
+  },
+  disabledButton: {
+    opacity: 0.7,
   },
   buttonText: { color: "#fff", fontWeight: "600", fontSize: 16 },
   footer: { flexDirection: "row", justifyContent: "center" },

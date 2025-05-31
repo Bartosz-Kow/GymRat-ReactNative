@@ -21,10 +21,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     AsyncStorage.getItem("userId").then((id) => {
-      if (id) {
-        setUserIdState(id);
-      }
-      setIsInitialized(true); // ✅ informujemy, że dane już są wczytane
+      setUserIdState(id);
+      setIsInitialized(true);
     });
   }, []);
 

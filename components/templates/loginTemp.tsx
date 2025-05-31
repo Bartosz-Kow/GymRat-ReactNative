@@ -21,24 +21,23 @@ const LoginTemplate = () => {
 
   const { mutate: login, isPending } = useLoginMutation();
 
-  const handleLogin = () => {
-    if (!email || !password) {
-      Alert.alert("Uzupełnij wszystkie pola");
-      return;
-    }
+  const { setUserId } = useAuth();
 
+  const handleLogin = () => {
     login(
       { email, password },
       {
         onSuccess: (data) => {
           const userId = data.userId;
-          setUserId(userId);
+
+          console.log("Zalogowano jako:", userId);
+          setUserId(userId); // ✅ ustaw userId od razu
 
           getUserById(userId, (user) => {
             if (!user) {
               Alert.alert("Brak lokalnego użytkownika");
-              router.replace("/home");
               console.log(`Zapisywanie użytkownika ${userId} do bazy danych`);
+              router.replace("/home");
               return;
             }
 
@@ -49,7 +48,7 @@ const LoginTemplate = () => {
                 console.log("Twoje ćwiczenia:", exercises);
               }
 
-              router.replace("/home");
+              router.replace("/home"); // ✅ nawiguj dopiero na końcu
             });
           });
         },
@@ -80,6 +79,7 @@ const LoginTemplate = () => {
           onPasswordChange={setPassword}
           onLogin={handleLogin}
           onNavigateToRegister={goToRegister}
+          isLoading={isPending}
         />
       </View>
     </SafeAreaView>

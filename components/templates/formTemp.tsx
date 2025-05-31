@@ -42,6 +42,7 @@ export default function FormTemp() {
   };
 
   const handleSave = () => {
+    console.log("Zapis treningu dla userId:", userId);
     if (!userId) return;
 
     insertTrainingWithExercises(userId, {
