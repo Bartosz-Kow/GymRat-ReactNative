@@ -56,6 +56,18 @@ export const initDatabase = (): void => {
   sets TEXT,
   FOREIGN KEY (trainingId) REFERENCES trainings (id)
 );`);
+  db.runSync(`CREATE TABLE IF NOT EXISTS exercise_progress (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  userId TEXT,
+  trainingId INTEGER,
+  exerciseName TEXT,
+  weight TEXT,
+  reps TEXT,
+  sets TEXT,
+  date TEXT,
+  FOREIGN KEY (trainingId) REFERENCES trainings (id),
+  FOREIGN KEY (userId) REFERENCES users (id)
+);`);
 };
 
 // Dodaj użytkownika
@@ -249,4 +261,61 @@ export const getTrainingById = (
     [id]
   );
   callback(result ?? null);
+};
+export interface ExerciseProgress {
+  id: number;
+  userId: string;
+  trainingId: number;
+  exerciseName: string;
+  weight: string;
+  reps: string;
+  sets: string;
+  date: string;
+}
+export const insertExerciseProgress = (
+  userId: string,
+  trainingId: number,
+  progress: {
+    exerciseName: string;
+    weight: string;
+    reps: string;
+    sets: string;
+  }[]
+): void => {
+  const date = new Date().toISOString(); // lub np. format YYYY-MM-DD
+
+  progress.forEach((item) => {
+    db.runSync(
+      `INSERT INTO exercise_progress 
+        (userId, trainingId, exerciseName, weight, reps, sets, date) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [
+        userId,
+        trainingId,
+        item.exerciseName,
+        item.weight,
+        item.reps,
+        item.sets,
+        date,
+      ]
+    );
+  });
+};
+export const getProgressByTrainingId = (
+  trainingId: number,
+  callback: (data: ExerciseProgress[]) => void
+): void => {
+  const results = db.getAllSync<ExerciseProgress>(
+    `SELECT * FROM exercise_progress WHERE trainingId = ? ORDER BY date ASC`,
+    [trainingId]
+  );
+  callback(results);
+};
+export const getSharedTrainings = (
+  callback: (trainings: Training[]) => void
+): void => {
+  const results = db.getAllSync<Training>(
+    "SELECT * FROM trainings WHERE shared = 1"
+  );
+  callback(results);
 };

@@ -29,9 +29,9 @@ const LoginForm = ({
 }: Props) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Welcome</Text>
-      <Text style={styles.header}>Back!</Text>
-      <Text style={styles.subHeader}>Sign In</Text>
+      <Text style={styles.header}>Witaj</Text>
+      <Text style={styles.header}>Ponownie!</Text>
+      <Text style={styles.subHeader}>Zaloguj się</Text>
 
       <TextInput
         placeholder="Email"
@@ -43,7 +43,7 @@ const LoginForm = ({
         autoCapitalize="none"
       />
       <TextInput
-        placeholder="Password"
+        placeholder="Hasło"
         value={password}
         onChangeText={onPasswordChange}
         style={styles.input}
@@ -59,14 +59,14 @@ const LoginForm = ({
         {isLoading ? (
           <ActivityIndicator size="small" color="#fff" />
         ) : (
-          <Text style={styles.buttonText}>SIGN IN</Text>
+          <Text style={styles.buttonText}>Zaloguj się</Text>
         )}
       </TouchableOpacity>
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>Don’t have an account? </Text>
+        <Text style={styles.footerText}>Nie masz jeszcze konta?</Text>
         <TouchableOpacity onPress={onNavigateToRegister}>
-          <Text style={styles.signupText}>Sign Up</Text>
+          <Text style={styles.signupText}> Rejestruj!</Text>
         </TouchableOpacity>
       </View>
     </View>

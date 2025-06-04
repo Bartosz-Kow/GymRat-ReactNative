@@ -33,8 +33,8 @@ const RegisterForm = ({
   };
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Hello</Text>
-      <Text style={styles.subHeader}>Sign Up</Text>
+      <Text style={styles.header}>Cześć!</Text>
+      <Text style={styles.subHeader}>Zarejestruj się</Text>
 
       <TextInput
         placeholder="Email"
@@ -46,7 +46,7 @@ const RegisterForm = ({
         autoCapitalize="none"
       />
       <TextInput
-        placeholder="Password"
+        placeholder="Hasło"
         value={password}
         onChangeText={onPasswordChange}
         style={styles.input}
@@ -54,7 +54,7 @@ const RegisterForm = ({
         secureTextEntry
       />
       <TextInput
-        placeholder="Confirm Password"
+        placeholder="Hasło"
         value={RepeatedPassword}
         onChangeText={onRepeatedPasswordChange}
         style={styles.input}
@@ -63,13 +63,13 @@ const RegisterForm = ({
       />
 
       <TouchableOpacity style={styles.button} onPress={onSignIn}>
-        <Text style={styles.buttonText}>SIGN UP</Text>
+        <Text style={styles.buttonText}>Zarejestruj się</Text>
       </TouchableOpacity>
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>You already have an account? </Text>
+        <Text style={styles.footerText}>Masz już konto? </Text>
         <TouchableOpacity onPress={goToLogin}>
-          <Text style={styles.signupText}>Sign In</Text>
+          <Text style={styles.signupText}>Zaloguj się</Text>
         </TouchableOpacity>
       </View>
     </View>

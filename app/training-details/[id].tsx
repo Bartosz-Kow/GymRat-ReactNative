@@ -57,7 +57,9 @@ export default function TrainingDetailsScreen() {
 
         <TouchableOpacity
           style={styles.progressButton}
-          onPress={() => console.log("Progresuj trening")}
+          onPress={() =>
+            router.push(`/training-details/AddProgressScreen?id=${id}`)
+          }
         >
           <Text style={styles.buttonText}>Progresuj</Text>
         </TouchableOpacity>

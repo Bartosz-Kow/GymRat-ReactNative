@@ -20,13 +20,17 @@ import {
 } from "@/database/database";
 import { useExerciseStore } from "@/store/useExcersiseStore";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useAuth } from "@/context/AuthContext";
 
 export default function EditTrainingScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { userId } = useAuth();
+
   const [training, setTraining] = useState<Partial<Training>>({});
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const exercises = useExerciseStore((state) => state.exercises);
   const setExercises = useExerciseStore((state) => state.setExercises);
@@ -38,14 +42,18 @@ export default function EditTrainingScreen() {
 
     getTrainingById(Number(id), (tr) => {
       if (tr) {
+        if (tr.userId !== userId) {
+          router.replace("/home");
+          return;
+        }
         setTraining(tr);
         setDate(new Date(tr.date));
+        setLoading(false);
       }
     });
 
     getExercisesByTrainingId(Number(id), setExercises);
 
-    // ✅ Czyść ćwiczenia przy wychodzeniu z ekranu
     return () => {
       clearExercises();
     };
@@ -64,9 +72,17 @@ export default function EditTrainingScreen() {
       exercises,
     });
 
-    clearExercises(); // ✅ Czyść po zapisaniu
+    clearExercises();
     router.replace("/home");
   };
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text>Wczytywanie...</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
