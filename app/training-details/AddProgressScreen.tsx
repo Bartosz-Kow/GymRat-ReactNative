@@ -6,6 +6,9 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  StatusBar,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
@@ -14,6 +17,8 @@ import {
   TrainingExercise,
 } from "@/database/database";
 import { useAuth } from "@/context/AuthContext";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function AddProgressScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -62,77 +67,131 @@ export default function AddProgressScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.header}>Dodaj progres</Text>
-      {progressData.map((item, index) => (
-        <View key={index} style={styles.card}>
-          <Text style={styles.exerciseName}>{item.exerciseName}</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        style={styles.flex}
+      >
+        <ScrollView contentContainerStyle={styles.container}>
+          <Text style={styles.header}>💪 Dodaj progres</Text>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Ciężar (kg)"
-            keyboardType="numeric"
-            value={item.weight}
-            onChangeText={(text) => updateField(index, "weight", text)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Powtórzenia"
-            keyboardType="numeric"
-            value={item.reps}
-            onChangeText={(text) => updateField(index, "reps", text)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Serie"
-            keyboardType="numeric"
-            value={item.sets}
-            onChangeText={(text) => updateField(index, "sets", text)}
-          />
-        </View>
-      ))}
+          {progressData.map((item, index) => (
+            <View key={index} style={styles.card}>
+              <View style={styles.cardHeader}>
+                <FontAwesome5 name="dumbbell" size={20} color="#00cc99" />
+                <Text style={styles.exerciseName}>{item.exerciseName}</Text>
+              </View>
 
-      <TouchableOpacity style={styles.button} onPress={saveProgress}>
-        <Text style={styles.buttonText}>Zapisz progres</Text>
-      </TouchableOpacity>
-    </ScrollView>
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>Ciężar (kg)</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="np. 60"
+                  keyboardType="numeric"
+                  value={item.weight}
+                  onChangeText={(text) => updateField(index, "weight", text)}
+                />
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>Powtórzenia</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="np. 10"
+                  keyboardType="numeric"
+                  value={item.reps}
+                  onChangeText={(text) => updateField(index, "reps", text)}
+                />
+              </View>
+
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>Serie</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="np. 4"
+                  keyboardType="numeric"
+                  value={item.sets}
+                  onChangeText={(text) => updateField(index, "sets", text)}
+                />
+              </View>
+            </View>
+          ))}
+
+          <TouchableOpacity style={styles.button} onPress={saveProgress}>
+            <Text style={styles.buttonText}>Zapisz progres</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 20 },
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#f7fdfc",
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+  },
+  flex: {
+    flex: 1,
+  },
+  container: {
+    padding: 20,
+    paddingBottom: 40,
+  },
   header: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: "bold",
     marginBottom: 20,
     color: "#00cc99",
   },
   card: {
-    backgroundColor: "#f7f7f7",
+    backgroundColor: "#ffffff",
+    borderRadius: 16,
     padding: 16,
-    marginBottom: 16,
-    borderRadius: 12,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: "#d2f4eb",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  cardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
   },
   exerciseName: {
     fontSize: 18,
     fontWeight: "600",
-    marginBottom: 8,
-    color: "#333",
+    color: "#00aa88",
+    marginLeft: 10,
+  },
+  inputGroup: {
+    marginBottom: 12,
+  },
+  label: {
+    color: "#666",
+    marginBottom: 4,
+    fontSize: 14,
+    fontWeight: "500",
   },
   input: {
     borderWidth: 1,
     borderColor: "#ddd",
-    borderRadius: 8,
+    borderRadius: 10,
     padding: 10,
-    marginTop: 8,
     backgroundColor: "#fff",
+    fontSize: 16,
   },
   button: {
     backgroundColor: "#007766",
     padding: 16,
-    borderRadius: 12,
-    marginTop: 30,
+    borderRadius: 14,
     alignItems: "center",
+    marginTop: 10,
   },
   buttonText: {
     color: "#fff",

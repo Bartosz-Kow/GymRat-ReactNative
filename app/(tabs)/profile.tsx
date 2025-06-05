@@ -11,8 +11,9 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useAuth } from "@/context/AuthContext";
-import { getUserById, updateUserInfo } from "@/database/database";
+import { getUserById } from "@/database/database";
 import { LinearGradient } from "expo-linear-gradient";
+import { MaterialIcons } from "@expo/vector-icons";
 
 interface User {
   id: string;
@@ -31,9 +32,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (userId) {
-      getUserById(userId, (data) => {
-        setUser(data);
-      });
+      getUserById(userId, (data) => setUser(data));
     }
   }, [userId]);
 
@@ -66,92 +65,62 @@ export default function Profile() {
       ? require("@/assets/images/avatar_female.png")
       : require("@/assets/images/avatar_male.png");
 
-  const handleSave = () => {
-    setModalVisible(false);
-  };
+  const handleSave = () => setModalVisible(false);
 
   return (
     <LinearGradient colors={["#e0f7f4", "#ccf2e9"]} style={styles.gradient}>
       <SafeAreaView style={styles.container}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          <Image source={avatar} style={styles.avatar} />
-          <Text style={styles.name}>{user?.name || "Imię nieznane"}</Text>
-          <Text style={styles.subtitle}>
-            Płeć: {user?.gender === "female" ? "Kobieta" : "Mężczyzna"}
-          </Text>
-          <Text style={styles.subtitle}>
-            Wiek: {calculateAge(user?.birthDate) || "Brak danych"}
-          </Text>
-
-          <View style={styles.infoSection}>
-            <Text style={styles.infoLabel}>
-              Email: <Text style={styles.infoValue}>{user?.email}</Text>
+          <View style={styles.profileCard}>
+            <Image source={avatar} style={styles.avatar} />
+            <Text style={styles.name}>{user?.name || "Imię nieznane"}</Text>
+            <Text style={styles.info}>
+              {user?.gender === "female" ? "Kobieta" : "Mężczyzna"} •{" "}
+              {calculateAge(user?.birthDate) || "Brak danych"} lat
             </Text>
-            <Text style={styles.infoLabel}>
-              Data urodzenia:{" "}
-              <Text style={styles.infoValue}>{user?.birthDate || "Brak"}</Text>
-            </Text>
-            <Text style={styles.infoLabel}>
-              Wzrost: <Text style={styles.infoValue}>{height} m</Text>
-            </Text>
-            <Text style={styles.infoLabel}>
-              Waga: <Text style={styles.infoValue}>{weight} kg</Text>
-            </Text>
+            <Text style={styles.email}>{user?.email}</Text>
           </View>
 
-          <TouchableOpacity
-            style={styles.editButton}
-            onPress={() => setModalVisible(true)}
-          >
-            <Text style={styles.editText}>Edytuj parametry</Text>
-          </TouchableOpacity>
+          <View style={styles.statsCard}>
+            <View style={styles.statRow}>
+              <Text style={styles.label}>Wzrost:</Text>
+              <Text style={styles.value}>{height} m</Text>
+            </View>
+            <View style={styles.statRow}>
+              <Text style={styles.label}>Waga:</Text>
+              <Text style={styles.value}>{weight} kg</Text>
+            </View>
+            <TouchableOpacity
+              style={styles.editButton}
+              onPress={() => setModalVisible(true)}
+            >
+              <MaterialIcons name="edit" size={18} color="#fff" />
+              <Text style={styles.editText}>Edytuj parametry</Text>
+            </TouchableOpacity>
+          </View>
 
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>BMI Tracker</Text>
-            <View style={styles.bmiGaugeContainer}>
-              <View style={styles.bmiGaugeBar}>
-                <View
-                  style={[
-                    styles.bmiGaugeSegment,
-                    { backgroundColor: "#5DADE2", flex: 18.5 },
-                  ]}
-                />
-                <View
-                  style={[
-                    styles.bmiGaugeSegment,
-                    { backgroundColor: "#58D68D", flex: 6.5 },
-                  ]}
-                />
-                <View
-                  style={[
-                    styles.bmiGaugeSegment,
-                    { backgroundColor: "#F5B041", flex: 5 },
-                  ]}
-                />
-                <View
-                  style={[
-                    styles.bmiGaugeSegment,
-                    { backgroundColor: "#E74C3C", flex: 10 },
-                  ]}
-                />
-              </View>
-              <View
-                style={[
-                  styles.bmiIndicator,
-                  { left: `${Math.min((bmi / 40) * 100, 100)}%` },
-                ]}
-              >
-                <Text style={styles.bmiArrow}>⬇</Text>
-              </View>
-              <Text style={styles.bmiValue}>{bmi}</Text>
-              <Text
-                style={[styles.bmiStatusLabel, { color: bmiCategory.color }]}
-              >
-                {bmiCategory.label}
-              </Text>
-              <Text style={styles.bmiLabel}>
-                Szacowana zawartość tłuszczu: {bmiCategory.fat}
-              </Text>
+          <View style={styles.bmiCard}>
+            <Text style={styles.bmiTitle}>Twój BMI</Text>
+            <Text style={styles.bmiValue}>{bmi}</Text>
+            <Text style={[styles.bmiCategory, { color: bmiCategory.color }]}>
+              {bmiCategory.label}
+            </Text>
+            <Text style={styles.bmiDescription}>
+              Szacowana zawartość tłuszczu: {bmiCategory.fat}
+            </Text>
+            <View style={styles.bmiBar}>
+              <View style={{ flex: 18.5, backgroundColor: "#5DADE2" }} />
+              <View style={{ flex: 6.5, backgroundColor: "#58D68D" }} />
+              <View style={{ flex: 5, backgroundColor: "#F5B041" }} />
+              <View style={{ flex: 10, backgroundColor: "#E74C3C" }} />
+            </View>
+            <View
+              style={[
+                styles.bmiIndicator,
+                { left: `${Math.min((bmi / 40) * 100, 100)}%` },
+              ]}
+            >
+              <Text style={styles.bmiArrow}>⬇</Text>
             </View>
           </View>
         </ScrollView>
@@ -159,14 +128,15 @@ export default function Profile() {
         <Modal animationType="slide" transparent={true} visible={modalVisible}>
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
-              <Text>Waga (kg):</Text>
+              <Text style={styles.modalTitle}>Zmień parametry</Text>
+              <Text style={styles.modalLabel}>Waga (kg)</Text>
               <TextInput
                 value={weight}
                 onChangeText={setWeight}
                 keyboardType="numeric"
                 style={styles.input}
               />
-              <Text>Wzrost (m):</Text>
+              <Text style={styles.modalLabel}>Wzrost (m)</Text>
               <TextInput
                 value={height}
                 onChangeText={setHeight}
@@ -187,104 +157,116 @@ export default function Profile() {
 const styles = StyleSheet.create({
   gradient: { flex: 1 },
   container: { flex: 1, paddingHorizontal: 20 },
-  scrollContent: { alignItems: "center", paddingBottom: 40 },
-  avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+  scrollContent: { paddingBottom: 40 },
+  profileCard: {
+    alignItems: "center",
     marginTop: 40,
-    marginBottom: 16,
+    marginBottom: 24,
+  },
+  avatar: {
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    borderWidth: 3,
+    borderColor: "#00cc99",
+    backgroundColor: "black",
+    marginBottom: 12,
   },
   name: {
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: "bold",
     color: "#00aa88",
   },
-  subtitle: {
+  info: {
     fontSize: 16,
     color: "#444",
-    marginBottom: 4,
+    marginTop: 4,
   },
-  card: {
-    marginTop: 30,
+  email: {
+    fontSize: 14,
+    color: "#777",
+    marginTop: 2,
+  },
+  statsCard: {
     backgroundColor: "#fff",
     borderRadius: 16,
     padding: 20,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 6 },
-    elevation: 4,
-    width: "100%",
+    marginBottom: 20,
+    elevation: 3,
   },
-  cardTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-    marginBottom: 12,
-    color: "#00aa88",
-  },
-  bmiGaugeContainer: {
-    marginTop: 10,
-    alignItems: "center",
-  },
-  bmiGaugeBar: {
+  statRow: {
     flexDirection: "row",
-    height: 12,
-    width: "100%",
-    borderRadius: 6,
-    overflow: "hidden",
+    justifyContent: "space-between",
     marginBottom: 8,
   },
-  bmiGaugeSegment: {
-    height: "100%",
+  label: {
+    fontSize: 16,
+    color: "#444",
   },
-  bmiIndicator: {
-    position: "absolute",
-    top: -8,
-    transform: [{ translateX: -6 }],
+  value: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#00aa88",
   },
-  bmiArrow: {
-    fontSize: 20,
-    color: "#333",
+  editButton: {
+    flexDirection: "row",
+    backgroundColor: "#00aa88",
+    padding: 10,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 14,
+  },
+  editText: {
+    color: "#fff",
+    fontWeight: "bold",
+    marginLeft: 6,
+  },
+  bmiCard: {
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 20,
+    elevation: 3,
+    alignItems: "center",
+  },
+  bmiTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 8,
+    color: "#00aa88",
   },
   bmiValue: {
     fontSize: 36,
     fontWeight: "bold",
     color: "#00cc99",
-    marginTop: 4,
   },
-  bmiStatusLabel: {
+  bmiCategory: {
     fontSize: 16,
     fontWeight: "600",
-    marginTop: 4,
+    marginTop: 6,
   },
-  bmiLabel: {
+  bmiDescription: {
     fontSize: 14,
     color: "#666",
     marginTop: 4,
+    marginBottom: 12,
   },
-  infoSection: {
-    marginTop: 20,
+  bmiBar: {
+    flexDirection: "row",
+    height: 12,
+    borderRadius: 6,
+    overflow: "hidden",
     width: "100%",
-  },
-  infoLabel: {
-    fontSize: 16,
-    color: "#333",
-    marginBottom: 4,
-  },
-  infoValue: {
-    fontWeight: "600",
-    color: "#00aa88",
-  },
-  editButton: {
     marginTop: 10,
-    padding: 10,
-    backgroundColor: "#00aa88",
-    borderRadius: 8,
   },
-  editText: {
-    color: "white",
-    fontWeight: "bold",
+  bmiIndicator: {
+    position: "absolute",
+    top: 165, // połowa wysokości bmiBar (12) – by ją opuścić do środka
+    transform: [{ translateX: -6 }, { translateY: -10 }], // dodatkowe wyśrodkowanie
+  },
+  bmiArrow: {
+    fontSize: 20,
+    color: "#333",
   },
   modalContainer: {
     flex: 1,
@@ -294,22 +276,33 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: "white",
-    borderRadius: 12,
+    borderRadius: 16,
     padding: 20,
-    width: "80%",
-    elevation: 5,
+    width: "85%",
+    elevation: 6,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 12,
+    color: "#00aa88",
+  },
+  modalLabel: {
+    marginBottom: 4,
+    color: "#444",
+    fontWeight: "600",
   },
   input: {
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 8,
+    borderRadius: 10,
+    padding: 10,
     marginBottom: 12,
   },
   saveButton: {
     backgroundColor: "#00aa88",
-    padding: 10,
-    borderRadius: 8,
+    padding: 12,
+    borderRadius: 10,
     alignItems: "center",
   },
   saveText: {

@@ -15,7 +15,7 @@ import {
   Training,
 } from "@/database/database";
 import { router } from "expo-router";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 
 export default function AllTrainingsScreen() {
   const { userId } = useAuth();
@@ -40,63 +40,89 @@ export default function AllTrainingsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Wszystkie Twoje treningi</Text>
-      <FlatList
-        data={trainings}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.row}>
-            <TouchableOpacity
-              style={styles.itemContent}
-              onPress={() => router.push(`/training-details/${item.id}`)}
-            >
-              <Text style={styles.name}>{item.name}</Text>
-              <Text style={styles.meta}>
-                📅 {item.date.split("T")[0]} • {item.level} • {item.type}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleDelete(item.id)}>
-              <MaterialIcons name="delete" size={24} color="#cc0000" />
-            </TouchableOpacity>
-          </View>
-        )}
-        ListEmptyComponent={
-          <Text style={styles.empty}>Brak zapisanych treningów</Text>
-        }
-      />
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <Text style={styles.title}>📋 Twoje treningi</Text>
+        <FlatList
+          data={trainings}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <TouchableOpacity
+                style={styles.cardContent}
+                onPress={() => router.push(`/training-details/${item.id}`)}
+              >
+                <View style={styles.iconWrapper}>
+                  <FontAwesome5 name="dumbbell" size={20} color="#00cc99" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.name}>{item.name}</Text>
+                  <Text style={styles.meta}>
+                    📅 {item.date.split("T")[0]} • {item.level} • {item.type}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleDelete(item.id)}>
+                <MaterialIcons name="delete" size={24} color="#cc0000" />
+              </TouchableOpacity>
+            </View>
+          )}
+          ListEmptyComponent={
+            <Text style={styles.empty}>Brak zapisanych treningów</Text>
+          }
+        />
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#f7fdfc",
+  },
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: "#fff",
+    paddingHorizontal: 20,
+    paddingTop: 30, // 👈 poprawka: bezpieczny margines pod status bar
   },
   title: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: "bold",
     marginBottom: 16,
     color: "#00aa88",
   },
-  row: {
+  card: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    padding: 14,
-    marginBottom: 12,
-    backgroundColor: "#f4f4f4",
-    borderRadius: 10,
+    backgroundColor: "#ffffff",
+    padding: 16,
+    marginBottom: 14,
+    borderRadius: 16,
+    shadowColor: "#000",
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
   },
-  itemContent: {
+  cardContent: {
+    flexDirection: "row",
     flex: 1,
-    marginRight: 10,
+    alignItems: "center",
+  },
+  iconWrapper: {
+    width: 40,
+    height: 40,
+    backgroundColor: "#e0faf4",
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 14,
   },
   name: {
     fontSize: 16,
     fontWeight: "600",
+    color: "#333",
   },
   meta: {
     fontSize: 14,
@@ -104,8 +130,9 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   empty: {
-    marginTop: 20,
+    marginTop: 40,
     textAlign: "center",
+    fontSize: 16,
     color: "#999",
   },
 });

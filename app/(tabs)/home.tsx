@@ -37,7 +37,6 @@ export default function Home() {
 
   const loadTrainings = () => {
     if (!userId) return;
-
     getTrainingsByUserId(userId, setTrainings);
     getSharedTrainings(setSharedTrainings);
     getUserById(userId, (user) => {
@@ -103,18 +102,16 @@ export default function Home() {
         <Text style={styles.addCardText}>Dodaj nowy trening</Text>
       </TouchableOpacity>
 
-      <Text style={styles.sectionTitle}>
-        Twoje treningi
+      <View style={styles.sectionHeader}>
+        <Text style={styles.sectionTitle}>Twoje treningi</Text>
         {!showAll && trainings.length > 2 && (
-          <Text
+          <TouchableOpacity
             onPress={() => router.push("/training-details/all-trainings")}
-            style={styles.showMoreText}
           >
-            {" "}
-            • Pokaż wszystkie
-          </Text>
+            <Text style={styles.showMoreText}>Pokaż wszystkie</Text>
+          </TouchableOpacity>
         )}
-      </Text>
+      </View>
 
       <FlatList
         data={showAll ? trainings : trainings.slice(0, 2)}
@@ -236,10 +233,15 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginLeft: 10,
   },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 15,
+  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
-    marginBottom: 15,
     color: "#222",
   },
   showMoreText: {

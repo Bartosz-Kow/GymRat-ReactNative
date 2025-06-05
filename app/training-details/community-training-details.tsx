@@ -4,7 +4,7 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  Button,
+  TouchableOpacity,
   Alert,
 } from "react-native";
 import {
@@ -14,6 +14,7 @@ import {
 } from "@/database/database";
 import { useLocalSearchParams } from "expo-router";
 import { useAuth } from "@/context/AuthContext";
+import { FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function CommunityTrainingDetails() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -40,7 +41,7 @@ export default function CommunityTrainingDetails() {
       name: training.name,
       date: new Date().toISOString(),
       type: training.type,
-      shared: false, // nowy trening użytkownika nie jest udostępniony
+      shared: false,
       publicTitle: training.publicTitle,
       level: training.level,
       exercises: exercises.map((ex) => ({
@@ -51,75 +52,147 @@ export default function CommunityTrainingDetails() {
       })),
     });
 
-    Alert.alert("Zapisano", "Trening został zapisany do Twoich treningów!");
+    Alert.alert("✅ Zapisano", "Trening został dodany do Twoich treningów.");
   };
 
   if (!training) {
     return (
-      <View style={styles.container}>
-        <Text>Wczytywanie treningu...</Text>
+      <View style={styles.loadingContainer}>
+        <Text style={styles.loadingText}>Wczytywanie treningu...</Text>
       </View>
     );
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>{training.publicTitle || training.name}</Text>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.scrollContent}
+    >
+      <View style={styles.header}>
+        <FontAwesome5 name="users" size={20} color="#00cc99" />
+        <Text style={styles.title}>
+          {training.publicTitle || training.name}
+        </Text>
+      </View>
       <Text style={styles.meta}>
         {training.level} • {training.type}
       </Text>
       <Text style={styles.date}>📅 {training.date.split("T")[0]}</Text>
 
-      {exercises.map((ex, idx) => (
-        <View key={idx} style={styles.exercise}>
-          <Text style={styles.exerciseName}>{ex.name}</Text>
-          <Text>
-            Ciężar: {ex.weight} | Powtórzenia: {ex.reps} | Serie: {ex.sets}
-          </Text>
-        </View>
-      ))}
-
-      <View style={styles.buttonContainer}>
-        <Button title="Zapisz trening" onPress={handleSaveTraining} />
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Ćwiczenia</Text>
+        {exercises.map((ex, idx) => (
+          <View key={idx} style={styles.exerciseCard}>
+            <View style={styles.exerciseRow}>
+              <MaterialCommunityIcons
+                name="weight-lifter"
+                size={20}
+                color="#00aa88"
+                style={{ marginRight: 10 }}
+              />
+              <Text style={styles.exerciseName}>{ex.name}</Text>
+            </View>
+            <Text style={styles.exerciseStats}>
+              💪 {ex.weight} kg | 🔁 {ex.reps} powt. | 📦 {ex.sets} serie
+            </Text>
+          </View>
+        ))}
       </View>
+
+      <TouchableOpacity style={styles.saveButton} onPress={handleSaveTraining}>
+        <Text style={styles.saveButtonText}>Zapisz trening do swoich</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    backgroundColor: "#f7fdfc",
     flex: 1,
+    backgroundColor: "#f7fdfc",
+  },
+  scrollContent: {
+    padding: 20,
+    paddingTop: 60,
+    paddingBottom: 40,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#f7fdfc",
+  },
+  loadingText: {
+    fontSize: 16,
+    color: "#666",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     color: "#00cc99",
-    marginBottom: 5,
+    marginLeft: 10,
+    flexShrink: 1,
   },
   meta: {
     fontSize: 16,
     color: "#555",
-    marginBottom: 10,
+    marginBottom: 4,
   },
   date: {
-    marginBottom: 15,
-    color: "#333",
+    fontSize: 14,
+    color: "#777",
+    marginBottom: 20,
   },
-  exercise: {
+  section: {
+    marginBottom: 30,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    marginBottom: 12,
+    color: "#222",
+  },
+  exerciseCard: {
     backgroundColor: "#f0fefb",
-    padding: 10,
+    padding: 14,
+    borderRadius: 10,
     marginBottom: 10,
-    borderRadius: 8,
     borderWidth: 1,
     borderColor: "#d2f4eb",
   },
+  exerciseRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 4,
+  },
   exerciseName: {
+    fontSize: 16,
     fontWeight: "600",
     color: "#00aa88",
   },
-  buttonContainer: {
-    marginTop: 20,
+  exerciseStats: {
+    fontSize: 14,
+    color: "#555",
+  },
+  saveButton: {
+    backgroundColor: "#00cc99",
+    padding: 18,
+    borderRadius: 14,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 4,
+  },
+  saveButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
