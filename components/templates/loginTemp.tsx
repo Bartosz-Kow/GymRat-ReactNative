@@ -88,19 +88,19 @@ const LoginTemplate = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 2,
     alignItems: "center",
     justifyContent: "flex-end",
   },
   image: {
     position: "absolute",
-    top: 0,
+    top: 3,
     width: "100%",
     height: "80%",
   },
   formWrapper: {
     width: "100%",
-    maxWidth: 420,
+    maxWidth: 430,
     backgroundColor: "#fff",
     borderTopRightRadius: 35,
     borderTopLeftRadius: 35,
