@@ -46,7 +46,7 @@ const LoginTemplate = () => {
               if (exercises.length === 0) {
                 Alert.alert("Witaj użytkowniku 👋");
               } else {
-                console.log("Twoje ćwiczenia:", exercises);
+                console.log("Twój zestaw ćwiczeń:", exercises);
               }
 
               router.replace("/home");
