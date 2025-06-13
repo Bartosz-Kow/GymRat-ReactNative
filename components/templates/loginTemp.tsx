@@ -38,7 +38,7 @@ const LoginTemplate = () => {
             if (!user) {
               Alert.alert("Brak lokalnego użytkownika");
               router.replace("/home");
-              console.log(`Zapisywanie użytkownika ${userId} do bazy danych`);
+              console.log(`Dodawanie użytkownika ${userId} do bazy danych`);
               return;
             }
 
